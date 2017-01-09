@@ -5,20 +5,25 @@ const router = express.Router();
 const knex = require('../knex');
 var fs = require('fs');
 var pdf = require('html-pdf');
-var options = { format: 'Letter' };
+var options = {
+    format: 'Letter'
+};
 var path = require("path");
 
 
 var api_key = 'key-55a1b24b3aa69a31e3544066d9c88941';
 var domain = 'etsimple.com';
-const mailgun = require('mailgun-js')({apiKey: api_key, domain: domain});
+const mailgun = require('mailgun-js')({
+    apiKey: api_key,
+    domain: domain
+});
 
 
-router.post('/email', (req, res, next) =>{
-console.log('sent email');
-var today = new Date();
-var appointment = tConvert(req.body['appointment-time']);
-var $html = `<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional //EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"><html xmlns="http://www.w3.org/1999/xhtml" xmlns:v="urn:schemas-microsoft-com:vml" xmlns:o="urn:schemas-microsoft-com:office:office"><head>
+router.post('/email', (req, res, next) => {
+    console.log('sent email');
+    var today = new Date();
+    var appointment = tConvert(req.body['appointment-time']);
+    var $html = `<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional //EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"><html xmlns="http://www.w3.org/1999/xhtml" xmlns:v="urn:schemas-microsoft-com:vml" xmlns:o="urn:schemas-microsoft-com:office:office"><head>
 
   <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
   <meta name="viewport" content="width=device-width">
@@ -146,19 +151,19 @@ var $html = `<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional //EN" "ht
 
 </body></html>
 `;
-pdf.create($html, options).toFile(`./routes/tmpPDF/${req.body['child-last-name']}_${req.body['child-first-name']}_${today}.pdf`, function(err, res) {
-  if (err) return console.log(err);
-  console.log(res); // { filename: '/app/businesscard.pdf' }
+    pdf.create($html, options).toFile(`./routes/tmpPDF/${req.body['child-last-name']}_${req.body['child-first-name']}_${today}.pdf`, function(err, res) {
+        if (err) return console.log(err);
+        console.log(res); // { filename: '/app/businesscard.pdf' }
 
-var filepath = path.join(__dirname, `./tmpPDF/${req.body['child-last-name']}_${req.body['child-first-name']}_${today}.pdf`);
-var $file = fs.readFileSync(filepath);
+        var filepath = path.join(__dirname, `./tmpPDF/${req.body['child-last-name']}_${req.body['child-first-name']}_${today}.pdf`);
+        var $file = fs.readFileSync(filepath);
 
-  var data = {
-    'from': 'et.visitor@etsimple.com',
-    'to': 'shahzadkhan3iii7@gmail.com',
-    'subject': `Your ${appointment} Has Arrived!`,
-    attachment: filepath,
-    'html': `<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional //EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"><html xmlns="http://www.w3.org/1999/xhtml" xmlns:v="urn:schemas-microsoft-com:vml" xmlns:o="urn:schemas-microsoft-com:office:office"><head>
+        var data = {
+            'from': 'et.visitor@etsimple.com',
+            'to': 'shahzadkhan3iii7@gmail.com',
+            'subject': `Your ${appointment} Has Arrived!`,
+            attachment: filepath,
+            'html': `<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional //EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"><html xmlns="http://www.w3.org/1999/xhtml" xmlns:v="urn:schemas-microsoft-com:vml" xmlns:o="urn:schemas-microsoft-com:office:office"><head>
 
       <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
       <meta name="viewport" content="width=device-width">
@@ -490,22 +495,22 @@ var $file = fs.readFileSync(filepath);
 
     </body></html>
 `
-  };
+        };
 
-  mailgun.messages().send(data, function (error, body) {
-    console.log(body);
-    fs.unlink(filepath, function(){})
+        mailgun.messages().send(data, function(error, body) {
+            console.log(body);
+            fs.unlink(filepath, function() {})
 
-  });
+        });
+    });
+    res.send('sent email')
 });
-  res.send('sent email')
-});
 
-router.post('/email-adult', (req, res, next) =>{
-console.log('sent email');
-var today = new Date();
-var appointment = tConvert(req.body['appointment-time']);
-var $html = `<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional //EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"><html xmlns="http://www.w3.org/1999/xhtml" xmlns:v="urn:schemas-microsoft-com:vml" xmlns:o="urn:schemas-microsoft-com:office:office"><head>
+router.post('/email-adult', (req, res, next) => {
+    console.log('sent email');
+    var today = new Date();
+    var appointment = tConvert(req.body['appointment-time']);
+    var $html = `<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional //EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"><html xmlns="http://www.w3.org/1999/xhtml" xmlns:v="urn:schemas-microsoft-com:vml" xmlns:o="urn:schemas-microsoft-com:office:office"><head>
 
   <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
   <meta name="viewport" content="width=device-width">
@@ -623,19 +628,19 @@ var $html = `<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional //EN" "ht
 
 </body></html>
 `;
-pdf.create($html, options).toFile(`./routes/tmpPDF/${req.body['last-name']}_${req.body['first-name']}_${today}.pdf`, function(err, res) {
-  if (err) return console.log(err);
-  console.log(res); // { filename: '/app/businesscard.pdf' }
+    pdf.create($html, options).toFile(`./routes/tmpPDF/${req.body['last-name']}_${req.body['first-name']}_${today}.pdf`, function(err, res) {
+        if (err) return console.log(err);
+        console.log(res); // { filename: '/app/businesscard.pdf' }
 
-var filepath = path.join(__dirname, `./tmpPDF/${req.body['last-name']}_${req.body['first-name']}_${today}.pdf`);
-var $file = fs.readFileSync(filepath);
+        var filepath = path.join(__dirname, `./tmpPDF/${req.body['last-name']}_${req.body['first-name']}_${today}.pdf`);
+        var $file = fs.readFileSync(filepath);
 
-  var data = {
-    'from': 'et.visitor@etsimple.com',
-    'to': 'jordandunc@gmail.com',
-    'subject': `Your ${appointment} Has Arrived!`,
-    attachment: filepath,
-    'html': `<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional //EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"><html xmlns="http://www.w3.org/1999/xhtml" xmlns:v="urn:schemas-microsoft-com:vml" xmlns:o="urn:schemas-microsoft-com:office:office"><head>
+        var data = {
+            'from': 'et.visitor@etsimple.com',
+            'to': 'shahzadkhan3iii7@gmail.com',
+            'subject': `Your ${appointment} Has Arrived!`,
+            attachment: filepath,
+            'html': `<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional //EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"><html xmlns="http://www.w3.org/1999/xhtml" xmlns:v="urn:schemas-microsoft-com:vml" xmlns:o="urn:schemas-microsoft-com:office:office"><head>
 
       <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
       <meta name="viewport" content="width=device-width">
@@ -871,6 +876,9 @@ var $file = fs.readFileSync(filepath);
             <table align="center" border="0" cellspacing="0" style="border-spacing: 0;border-collapse: collapse;vertical-align: top;border-top: 8px solid #FFFFFF;width: 100%"><tbody><tr style="vertical-align: top"><td align="center" style="word-break: break-word;border-collapse: collapse !important;vertical-align: top"></td></tr></tbody></table>
           </div>
         </td>
+      <: 8px solid #FFFFFF;width: 100%"><tbody><tr style="vertical-align: top"><td align="center" style="word-break: break-word;border-collapse: collapse !important;vertical-align: top"></td></tr></tbody></table>
+          </div>
+        </td>
       </tr>
     </tbody></table>
     </td></tr></tbody></table></div><!--[if (gte mso 9)|(IE)]></td><![endif]--><!--[if (gte mso 9)|(IE)]></td></tr></table><![endif]--></td></tr></tbody></table></td></tr></tbody></table>
@@ -957,27 +965,27 @@ var $file = fs.readFileSync(filepath);
 
     </body></html>
 `
-  };
+        };
 
-  mailgun.messages().send(data, function (error, body) {
-    console.log(body);
-    fs.unlink(filepath, function(){})
+        mailgun.messages().send(data, function(error, body) {
+            console.log(body);
+            fs.unlink(filepath, function() {})
 
-  });
+        });
+    });
+    res.send('sent email')
 });
-  res.send('sent email')
-});
 
-function tConvert (time) {
-  // Check correct time format and split into components
-  time = time.toString ().match (/^([01]\d|2[0-3])(:)([0-5]\d)(:[0-5]\d)?$/) || [time];
+function tConvert(time) {
+    // Check correct time format and split into components
+    time = time.toString().match(/^([01]\d|2[0-3])(:)([0-5]\d)(:[0-5]\d)?$/) || [time];
 
-  if (time.length > 1) { // If time format correct
-    time = time.slice (1);  // Remove full string match value
-    time[5] = +time[0] < 12 ? ' AM' : ' PM'; // Set AM/PM
-    time[0] = +time[0] % 12 || 12; // Adjust hours
-  }
-  return time.join (''); // return adjusted time or original string
+    if (time.length > 1) { // If time format correct
+        time = time.slice(1); // Remove full string match value
+        time[5] = +time[0] < 12 ? ' AM' : ' PM'; // Set AM/PM
+        time[0] = +time[0] % 12 || 12; // Adjust hours
+    }
+    return time.join(''); // return adjusted time or original string
 }
 
 module.exports = router;
